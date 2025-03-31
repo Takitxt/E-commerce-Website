@@ -62,3 +62,56 @@ export const loginUser = async (req,res) => {
         
     }
 }
+export const getUserProfile = async (req,res) => {
+    try {
+        const user = await User.findById(req.user._id).select("-password");
+        if (user){
+            res.json(user);
+        }else{
+            res.status(404).json({message:"User not found"});
+        }
+
+    } catch (error) {
+        res.status(500).json({message:"Server Error"});
+        
+    }
+}
+export const updateProfile = async (req,res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        const {currentPassword, newPassword } = req.body;
+
+        const isMatch = await bcrypt.compare(currentPassword,user.password);
+
+        if(!isMatch){
+            return res.status(404).json({message:"Password is Incorrect"});
+        }
+        user.name = req.body.name || user.name;
+
+        user.email = req.body.email || user. email;
+
+        if(newPassword){
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(newPassword, salt);
+        }
+
+        const updatedUser = await user.save();
+
+
+        res.json({
+            _id:updatedUser._id,
+            name:updatedUser.name,
+            email:updatedUser.email,
+            message:"Profile Updated Successfully",
+        })
+    
+    } catch (error) {
+        return res.status(500).json({message:"Server Error"});
+        
+    }
+
+
+} 
