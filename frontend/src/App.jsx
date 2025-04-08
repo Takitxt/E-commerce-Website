@@ -1,5 +1,7 @@
+import React from "react";
+import HomePage from "./Pages/homePage.jsx";
 
-import HomePage from "./Pages/homePage";
+
 function App() {
 
   return (
@@ -9,4 +11,4 @@ function App() {
   )
 }
 
-export default App
+export default App;
